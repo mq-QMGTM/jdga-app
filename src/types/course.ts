@@ -118,11 +118,15 @@ export interface Course {
   logoUrl?: string;
 }
 
+// Course status from user's perspective
+export type CourseStatus = 'played' | 'planning' | 'wishlist' | 'not-interested' | 'none';
+
 // User's personal data for a course
 export interface UserCourseRecord {
   id: string;
   courseId: string;
   hasPlayed: boolean;
+  status?: CourseStatus; // User's tracking status for this course
   timesPlayed: number;
   estimatedTimesPlayed: boolean;
   desiredFrequency:

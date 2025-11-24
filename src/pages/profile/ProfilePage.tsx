@@ -3,107 +3,235 @@ import { LargeHeader } from '@/components/layout/PageHeader';
 import { Settings, Trophy, Star, Flag, Moon, Sun, ChevronRight } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
+const styles = {
+  page: {
+    paddingBottom: 'calc(env(safe-area-inset-bottom) + 70px)',
+    backgroundColor: '#000',
+    minHeight: '100vh',
+    WebkitFontSmoothing: 'antialiased' as const,
+  },
+  userCard: {
+    margin: '12px 20px 0',
+    backgroundColor: '#1c1c1e',
+    borderRadius: '14px',
+    padding: '20px',
+  },
+  userRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+  },
+  avatar: {
+    width: '64px',
+    height: '64px',
+    borderRadius: '32px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+    flexShrink: 0,
+  },
+  avatarText: {
+    fontSize: '22px',
+    fontWeight: 700,
+    color: '#fff',
+  },
+  userName: {
+    fontSize: '20px',
+    fontWeight: 600,
+    color: '#fff',
+    letterSpacing: '-0.3px',
+  },
+  userSubtitle: {
+    fontSize: '15px',
+    color: '#6b7280',
+    marginTop: '4px',
+  },
+  statsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '12px',
+    margin: '16px 20px 0',
+  },
+  statCard: {
+    backgroundColor: '#1c1c1e',
+    borderRadius: '14px',
+    padding: '18px 16px',
+    textAlign: 'center' as const,
+  },
+  statValue: {
+    fontSize: '26px',
+    fontWeight: 700,
+    color: '#fff',
+    letterSpacing: '-0.5px',
+  },
+  statLabel: {
+    fontSize: '12px',
+    color: '#6b7280',
+    marginTop: '6px',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.5px',
+  },
+  sectionHeader: {
+    fontSize: '13px',
+    fontWeight: 600,
+    color: '#6b7280',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.8px',
+    padding: '28px 24px 12px',
+  },
+  listGroup: {
+    margin: '0 20px',
+    backgroundColor: '#1c1c1e',
+    borderRadius: '14px',
+    overflow: 'hidden',
+  },
+  navRow: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '14px 18px',
+    gap: '14px',
+    textDecoration: 'none',
+    borderBottom: '1px solid rgba(255,255,255,0.06)',
+  },
+  navRowLast: {
+    borderBottom: 'none',
+  },
+  navIcon: {
+    width: '36px',
+    height: '36px',
+    borderRadius: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  navTitle: {
+    flex: 1,
+    fontSize: '17px',
+    fontWeight: 400,
+    color: '#fff',
+  },
+  themeToggle: {
+    display: 'flex',
+    gap: '4px',
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderRadius: '8px',
+    padding: '4px',
+  },
+  themeButton: {
+    padding: '8px 12px',
+    fontSize: '14px',
+    fontWeight: 500,
+    borderRadius: '6px',
+    border: 'none',
+    cursor: 'pointer',
+    textTransform: 'capitalize' as const,
+  },
+  themeActive: {
+    backgroundColor: '#2c2c2e',
+    color: '#fff',
+  },
+  themeInactive: {
+    backgroundColor: 'transparent',
+    color: '#6b7280',
+  },
+  footer: {
+    padding: '32px 20px',
+    textAlign: 'center' as const,
+  },
+  footerTitle: {
+    fontSize: '15px',
+    fontWeight: 500,
+    color: '#6b7280',
+  },
+  footerSub: {
+    fontSize: '13px',
+    color: '#4b5563',
+    marginTop: '4px',
+  },
+};
+
 export function ProfilePage() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="pb-safe">
+    <div style={styles.page}>
       <LargeHeader title="Profile" subtitle="Manage your golf life" />
 
       {/* User card */}
-      <div className="px-5 mt-2">
-        <div className="card p-5">
-          <div className="flex items-center gap-4">
-            <div
-              className="w-16 h-16 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: 'var(--primary)' }}
-            >
-              <span className="text-xl font-bold text-white">JD</span>
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-[var(--foreground)]">JDGA Member</h2>
-              <p className="text-[15px] text-[var(--foreground-tertiary)]">The JDGA Official App</p>
-            </div>
+      <div style={styles.userCard}>
+        <div style={styles.userRow}>
+          <div style={styles.avatar}>
+            <span style={styles.avatarText}>JD</span>
+          </div>
+          <div>
+            <h2 style={styles.userName}>JDGA Member</h2>
+            <p style={styles.userSubtitle}>The JDGA Official App</p>
           </div>
         </div>
       </div>
 
       {/* Quick stats */}
-      <div className="px-5 mt-4">
-        <div className="grid grid-cols-3 gap-3">
-          <div className="stat-card">
-            <div className="stat-value">0</div>
-            <div className="stat-label">Courses</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-value">0</div>
-            <div className="stat-label">Rounds</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-value">0</div>
-            <div className="stat-label">Buddies</div>
-          </div>
+      <div style={styles.statsGrid}>
+        <div style={styles.statCard}>
+          <div style={styles.statValue}>0</div>
+          <div style={styles.statLabel}>Courses</div>
+        </div>
+        <div style={styles.statCard}>
+          <div style={styles.statValue}>0</div>
+          <div style={styles.statLabel}>Rounds</div>
+        </div>
+        <div style={styles.statCard}>
+          <div style={styles.statValue}>0</div>
+          <div style={styles.statLabel}>Buddies</div>
         </div>
       </div>
 
       {/* Golf section */}
-      <p className="section-header">Golf</p>
-      <div className="px-5">
-        <div className="list-group">
-          <NavRow to="/profile/memberships" icon={Flag} iconBg="#1d6f42" label="My Memberships" />
-          <NavRow to="/profile/favorites" icon={Star} iconBg="#ff9500" label="Favorites" />
-          <NavRow to="/profile/tournaments" icon={Trophy} iconBg="#d4a634" label="Tournament History" />
-        </div>
+      <p style={styles.sectionHeader}>Golf</p>
+      <div style={styles.listGroup}>
+        <NavRow to="/profile/memberships" icon={Flag} iconBg="#1d6f42" label="My Memberships" />
+        <NavRow to="/profile/favorites" icon={Star} iconBg="#ff9500" label="Favorites" />
+        <NavRow to="/profile/tournaments" icon={Trophy} iconBg="#d4a634" label="Tournament History" isLast />
       </div>
 
       {/* Settings section */}
-      <p className="section-header">Settings</p>
-      <div className="px-5">
-        <div className="list-group">
-          <NavRow to="/profile/settings" icon={Settings} iconBg="#8e8e93" label="Settings" />
+      <p style={styles.sectionHeader}>Settings</p>
+      <div style={styles.listGroup}>
+        <NavRow to="/profile/settings" icon={Settings} iconBg="#8e8e93" label="Settings" />
 
-          {/* Theme toggle */}
-          <div className="nav-row" style={{ cursor: 'default' }}>
-            <div
-              className="nav-row-icon"
-              style={{ backgroundColor: theme === 'dark' ? '#5856d6' : '#007aff' }}
-            >
-              {theme === 'dark' ? (
-                <Moon className="w-5 h-5 text-white" strokeWidth={1.5} />
-              ) : (
-                <Sun className="w-5 h-5 text-white" strokeWidth={1.5} />
-              )}
-            </div>
-            <div className="nav-row-content">
-              <div className="nav-row-title">Theme</div>
-            </div>
-            <div className="flex gap-1 bg-[var(--separator)] rounded-lg p-1">
-              {(['light', 'dark', 'system'] as const).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setTheme(t)}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all capitalize ${
-                    theme === t
-                      ? 'bg-[var(--card)] shadow-sm text-[var(--foreground)]'
-                      : 'text-[var(--foreground-tertiary)]'
-                  }`}
-                >
-                  {t === 'system' ? 'Auto' : t}
-                </button>
-              ))}
-            </div>
+        {/* Theme toggle */}
+        <div style={{ ...styles.navRow, ...styles.navRowLast, cursor: 'default' }}>
+          <div style={{ ...styles.navIcon, backgroundColor: theme === 'dark' ? '#5856d6' : '#007aff' }}>
+            {theme === 'dark' ? (
+              <Moon style={{ width: '20px', height: '20px', color: '#fff' }} strokeWidth={1.5} />
+            ) : (
+              <Sun style={{ width: '20px', height: '20px', color: '#fff' }} strokeWidth={1.5} />
+            )}
+          </div>
+          <span style={styles.navTitle}>Theme</span>
+          <div style={styles.themeToggle}>
+            {(['light', 'dark', 'system'] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => setTheme(t)}
+                style={{
+                  ...styles.themeButton,
+                  ...(theme === t ? styles.themeActive : styles.themeInactive),
+                }}
+              >
+                {t === 'system' ? 'Auto' : t}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
       {/* App info */}
-      <div className="px-5 py-8 text-center">
-        <p className="text-[15px] font-medium text-[var(--foreground-tertiary)]">
-          The JDGA Official App
-        </p>
-        <p className="text-[13px] text-[var(--foreground-tertiary)] mt-1">
-          v1.0.0 &middot; Built for the serious golf enthusiast
-        </p>
+      <div style={styles.footer}>
+        <p style={styles.footerTitle}>The JDGA Official App</p>
+        <p style={styles.footerSub}>v1.0.0 · Built for the serious golf enthusiast</p>
       </div>
     </div>
   );
@@ -114,21 +242,21 @@ function NavRow({
   icon: Icon,
   iconBg,
   label,
+  isLast = false,
 }: {
   to: string;
   icon: React.ElementType;
   iconBg: string;
   label: string;
+  isLast?: boolean;
 }) {
   return (
-    <Link to={to} className="nav-row">
-      <div className="nav-row-icon" style={{ backgroundColor: iconBg }}>
-        <Icon className="w-5 h-5 text-white" strokeWidth={1.5} />
+    <Link to={to} style={{ ...styles.navRow, ...(isLast ? styles.navRowLast : {}) }}>
+      <div style={{ ...styles.navIcon, backgroundColor: iconBg }}>
+        <Icon style={{ width: '20px', height: '20px', color: '#fff' }} strokeWidth={1.5} />
       </div>
-      <div className="nav-row-content">
-        <div className="nav-row-title">{label}</div>
-      </div>
-      <ChevronRight className="w-5 h-5 nav-row-chevron" />
+      <span style={styles.navTitle}>{label}</span>
+      <ChevronRight style={{ width: '20px', height: '20px', color: '#4b5563' }} />
     </Link>
   );
 }

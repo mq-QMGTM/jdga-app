@@ -58,12 +58,36 @@ interface LargeHeaderProps {
   children?: React.ReactNode;
 }
 
+const largeHeaderStyles = {
+  container: {
+    padding: '20px 20px 20px',
+    backgroundColor: '#000',
+  },
+  title: {
+    fontSize: '34px',
+    fontWeight: 700,
+    letterSpacing: '-0.5px',
+    color: '#fff',
+    lineHeight: 1.1,
+    margin: 0,
+  },
+  subtitle: {
+    fontSize: '15px',
+    color: '#6b7280',
+    marginTop: '8px',
+    lineHeight: 1.4,
+  },
+  childrenWrapper: {
+    marginTop: '20px',
+  },
+};
+
 export function LargeHeader({ title, subtitle, children }: LargeHeaderProps) {
   return (
-    <div className="page-header">
-      <h1 className="page-header-title">{title}</h1>
-      {subtitle && <p className="page-header-subtitle">{subtitle}</p>}
-      {children && <div className="mt-4">{children}</div>}
+    <div style={largeHeaderStyles.container}>
+      <h1 style={largeHeaderStyles.title}>{title}</h1>
+      {subtitle && <p style={largeHeaderStyles.subtitle}>{subtitle}</p>}
+      {children && <div style={largeHeaderStyles.childrenWrapper}>{children}</div>}
     </div>
   );
 }

@@ -5,6 +5,176 @@ import type { GolfTrip } from '@/types';
 import { getUpcomingTrips, getPastTrips } from '@/lib/storage';
 import { formatDate } from '@/lib/utils';
 
+const styles = {
+  page: {
+    paddingBottom: 'calc(env(safe-area-inset-bottom) + 70px)',
+    backgroundColor: '#000',
+    minHeight: '100vh',
+    WebkitFontSmoothing: 'antialiased' as const,
+  },
+  featureCard: {
+    margin: '16px 20px 0',
+    backgroundColor: '#1c1c1e',
+    borderRadius: '14px',
+    padding: '20px',
+  },
+  featureRow: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '16px',
+  },
+  featureIcon: {
+    width: '48px',
+    height: '48px',
+    borderRadius: '14px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    backgroundColor: '#ff9500',
+  },
+  featureContent: {
+    flex: 1,
+  },
+  featureTitle: {
+    fontSize: '17px',
+    fontWeight: 600,
+    color: '#fff',
+  },
+  featureDesc: {
+    fontSize: '15px',
+    color: '#6b7280',
+    marginTop: '4px',
+    lineHeight: 1.4,
+  },
+  featureButton: {
+    width: '100%',
+    marginTop: '16px',
+    padding: '14px 20px',
+    borderRadius: '10px',
+    border: 'none',
+    backgroundColor: 'rgba(34, 197, 94, 0.15)',
+    color: '#22c55e',
+    fontSize: '16px',
+    fontWeight: 600,
+    cursor: 'pointer',
+  },
+  section: {
+    padding: '0 20px',
+    marginTop: '24px',
+  },
+  sectionHeader: {
+    fontSize: '13px',
+    fontWeight: 600,
+    color: '#6b7280',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.8px',
+    marginBottom: '12px',
+    paddingLeft: '4px',
+  },
+  cardList: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '12px',
+  },
+  tripCard: {
+    backgroundColor: '#1c1c1e',
+    borderRadius: '14px',
+    padding: '16px 18px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '14px',
+  },
+  tripIcon: {
+    width: '48px',
+    height: '48px',
+    borderRadius: '12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+  },
+  tripContent: {
+    flex: 1,
+    minWidth: 0,
+  },
+  tripName: {
+    fontSize: '17px',
+    fontWeight: 500,
+    color: '#fff',
+  },
+  tripMeta: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+    marginTop: '6px',
+    fontSize: '14px',
+    color: '#6b7280',
+  },
+  tripMetaItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+  },
+  tripBadge: {
+    marginTop: '8px',
+    display: 'inline-block',
+    padding: '4px 12px',
+    borderRadius: '100px',
+    fontSize: '13px',
+    fontWeight: 500,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    color: '#9ca3af',
+  },
+  emptyState: {
+    backgroundColor: '#1c1c1e',
+    borderRadius: '14px',
+    padding: '48px 24px',
+    textAlign: 'center' as const,
+  },
+  emptyIcon: {
+    width: '72px',
+    height: '72px',
+    borderRadius: '22px',
+    backgroundColor: 'rgba(34, 197, 94, 0.15)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '0 auto 20px',
+  },
+  emptyTitle: {
+    fontSize: '22px',
+    fontWeight: 600,
+    color: '#fff',
+    marginBottom: '10px',
+  },
+  emptyDesc: {
+    fontSize: '16px',
+    color: '#6b7280',
+    maxWidth: '300px',
+    margin: '0 auto',
+    lineHeight: 1.5,
+  },
+  infoCard: {
+    margin: '24px 20px 0',
+    backgroundColor: '#1c1c1e',
+    borderRadius: '14px',
+    padding: '20px',
+  },
+  infoTitle: {
+    fontSize: '17px',
+    fontWeight: 600,
+    color: '#fff',
+  },
+  infoDesc: {
+    fontSize: '15px',
+    color: '#6b7280',
+    marginTop: '8px',
+    lineHeight: 1.4,
+  },
+};
+
 export function TripsPage() {
   const [upcomingTrips, setUpcomingTrips] = useState<GolfTrip[]>([]);
   const [pastTrips, setPastTrips] = useState<GolfTrip[]>([]);
@@ -27,63 +197,52 @@ export function TripsPage() {
   };
 
   return (
-    <div className="pb-safe">
+    <div style={styles.page}>
       <LargeHeader title="Golf Trips" subtitle="Plan and track your golf adventures">
         <button className="btn-primary">
-          <Plus className="w-5 h-5" strokeWidth={2} />
+          <Plus style={{ width: '20px', height: '20px' }} strokeWidth={2} />
           Plan Trip
         </button>
       </LargeHeader>
 
       {/* Weather suggestion card */}
-      <div className="px-5 mt-4">
-        <div className="card p-5">
-          <div className="flex items-start gap-4">
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: '#ff9500' }}
-            >
-              <Sun className="w-6 h-6 text-white" strokeWidth={1.5} />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-[17px] font-semibold text-[var(--foreground)]">
-                Weather-Aware Suggestions
-              </h3>
-              <p className="text-[15px] text-[var(--foreground-tertiary)] mt-1">
-                Get optimal courses based on current conditions
-              </p>
-            </div>
+      <div style={styles.featureCard}>
+        <div style={styles.featureRow}>
+          <div style={styles.featureIcon}>
+            <Sun style={{ width: '24px', height: '24px', color: '#fff' }} strokeWidth={1.5} />
           </div>
-          <button className="btn-secondary w-full mt-4">Find Best Courses This Month</button>
+          <div style={styles.featureContent}>
+            <h3 style={styles.featureTitle}>Weather-Aware Suggestions</h3>
+            <p style={styles.featureDesc}>Get optimal courses based on current conditions</p>
+          </div>
         </div>
+        <button style={styles.featureButton}>Find Best Courses This Month</button>
       </div>
 
       {/* Upcoming trips */}
-      <div className="px-5 mt-6">
-        <p className="section-header px-0">Upcoming Trips</p>
+      <div style={styles.section}>
+        <p style={styles.sectionHeader}>Upcoming Trips</p>
 
         {loading ? (
-          <div className="flex items-center justify-center py-16">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '64px 0' }}>
             <div className="spinner" />
           </div>
         ) : upcomingTrips.length === 0 ? (
-          <div className="card">
-            <div className="empty-state">
-              <div className="empty-state-icon">
-                <Plane className="w-8 h-8 text-[var(--primary)]" strokeWidth={1.5} />
-              </div>
-              <h3 className="empty-state-title">No Upcoming Trips</h3>
-              <p className="empty-state-description">
-                Plan your next golf adventure and track all the details.
-              </p>
-              <button className="btn-primary mt-5">
-                <Plus className="w-5 h-5" />
-                Plan Your First Trip
-              </button>
+          <div style={styles.emptyState}>
+            <div style={styles.emptyIcon}>
+              <Plane style={{ width: '32px', height: '32px', color: '#22c55e' }} strokeWidth={1.5} />
             </div>
+            <h3 style={styles.emptyTitle}>No Upcoming Trips</h3>
+            <p style={styles.emptyDesc}>
+              Plan your next golf adventure and track all the details.
+            </p>
+            <button className="btn-primary" style={{ marginTop: '20px' }}>
+              <Plus style={{ width: '20px', height: '20px' }} />
+              Plan Your First Trip
+            </button>
           </div>
         ) : (
-          <div className="card-list">
+          <div style={styles.cardList}>
             {upcomingTrips.map((trip) => (
               <TripRow key={trip.id} trip={trip} />
             ))}
@@ -93,9 +252,9 @@ export function TripsPage() {
 
       {/* Past trips */}
       {pastTrips.length > 0 && (
-        <div className="px-5 mt-6">
-          <p className="section-header px-0">Past Trips</p>
-          <div className="card-list">
+        <div style={styles.section}>
+          <p style={styles.sectionHeader}>Past Trips</p>
+          <div style={styles.cardList}>
             {pastTrips.slice(0, 5).map((trip) => (
               <TripRow key={trip.id} trip={trip} isPast />
             ))}
@@ -104,16 +263,12 @@ export function TripsPage() {
       )}
 
       {/* Non-golf trip card */}
-      <div className="px-5 mt-6">
-        <div className="card p-5">
-          <h4 className="text-[17px] font-semibold text-[var(--foreground)]">
-            Have a Non-Golf Trip Planned?
-          </h4>
-          <p className="text-[15px] text-[var(--foreground-tertiary)] mt-2">
-            Tell us where you're going and we'll suggest the best courses nearby.
-          </p>
-          <button className="btn-secondary mt-4">Find Courses Near My Trip</button>
-        </div>
+      <div style={styles.infoCard}>
+        <h4 style={styles.infoTitle}>Have a Non-Golf Trip Planned?</h4>
+        <p style={styles.infoDesc}>
+          Tell us where you're going and we'll suggest the best courses nearby.
+        </p>
+        <button style={{ ...styles.featureButton, marginTop: '16px' }}>Find Courses Near My Trip</button>
       </div>
     </div>
   );
@@ -121,32 +276,27 @@ export function TripsPage() {
 
 function TripRow({ trip, isPast }: { trip: GolfTrip; isPast?: boolean }) {
   return (
-    <div className={`card-list-item ${isPast ? 'opacity-60' : ''}`}>
-      <div
-        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-        style={{ backgroundColor: 'var(--primary)' }}
-      >
-        <Plane className="w-6 h-6 text-white" strokeWidth={1.5} />
+    <div style={{ ...styles.tripCard, opacity: isPast ? 0.6 : 1 }}>
+      <div style={styles.tripIcon}>
+        <Plane style={{ width: '24px', height: '24px', color: '#fff' }} strokeWidth={1.5} />
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-[17px] font-medium text-[var(--foreground)]">{trip.name}</div>
-        <div className="flex items-center gap-4 mt-1.5 text-[14px] text-[var(--foreground-tertiary)]">
-          <span className="flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5" />
+      <div style={styles.tripContent}>
+        <div style={styles.tripName}>{trip.name}</div>
+        <div style={styles.tripMeta}>
+          <span style={styles.tripMetaItem}>
+            <MapPin style={{ width: '14px', height: '14px' }} />
             {trip.destination}
           </span>
-          <span className="flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5" />
+          <span style={styles.tripMetaItem}>
+            <Calendar style={{ width: '14px', height: '14px' }} />
             {formatDate(trip.startDate)}
           </span>
         </div>
-        <div className="mt-2">
-          <span className="badge badge-muted">
-            {trip.plannedCourses.length} {trip.plannedCourses.length === 1 ? 'course' : 'courses'}
-          </span>
-        </div>
+        <span style={styles.tripBadge}>
+          {trip.plannedCourses.length} {trip.plannedCourses.length === 1 ? 'course' : 'courses'}
+        </span>
       </div>
-      <ChevronRight className="w-5 h-5 text-[var(--foreground-tertiary)] opacity-50 mt-1" />
+      <ChevronRight style={{ width: '20px', height: '20px', color: '#4b5563', flexShrink: 0 }} />
     </div>
   );
 }

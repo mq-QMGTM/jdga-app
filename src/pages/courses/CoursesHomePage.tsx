@@ -2,48 +2,120 @@ import { Link } from 'react-router-dom';
 import { LargeHeader } from '@/components/layout/PageHeader';
 import { Flag, Globe, CheckCircle, Trophy, Star, ChevronRight } from 'lucide-react';
 
+const styles = {
+  page: {
+    paddingBottom: 'calc(env(safe-area-inset-bottom) + 70px)',
+    backgroundColor: '#000',
+    minHeight: '100vh',
+    WebkitFontSmoothing: 'antialiased' as const,
+  },
+  content: {
+    padding: '0 20px',
+    marginTop: '12px',
+  },
+  listGroup: {
+    backgroundColor: '#1c1c1e',
+    borderRadius: '14px',
+    overflow: 'hidden',
+  },
+  navRow: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '14px 18px',
+    gap: '14px',
+    textDecoration: 'none',
+    borderBottom: '1px solid rgba(255,255,255,0.06)',
+  },
+  navRowLast: {
+    borderBottom: 'none',
+  },
+  navIcon: {
+    width: '36px',
+    height: '36px',
+    borderRadius: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  navContent: {
+    flex: 1,
+    minWidth: 0,
+  },
+  navTitle: {
+    fontSize: '17px',
+    fontWeight: 400,
+    color: '#fff',
+    lineHeight: 1.3,
+  },
+  navSubtitle: {
+    fontSize: '13px',
+    color: '#6b7280',
+    marginTop: '3px',
+    lineHeight: 1.3,
+  },
+  badge: {
+    padding: '4px 10px',
+    borderRadius: '100px',
+    fontSize: '13px',
+    fontWeight: 500,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    color: '#9ca3af',
+  },
+  sectionHeader: {
+    fontSize: '13px',
+    fontWeight: 600,
+    color: '#6b7280',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.8px',
+    padding: '28px 4px 12px',
+  },
+  section: {
+    marginTop: '0',
+  },
+};
+
 interface NavRowProps {
   to: string;
   icon: React.ElementType;
   iconBg: string;
-  iconColor: string;
   label: string;
   subtitle?: string;
   badge?: string;
+  isLast?: boolean;
 }
 
-function NavRow({ to, icon: Icon, iconBg, iconColor, label, subtitle, badge }: NavRowProps) {
+function NavRow({ to, icon: Icon, iconBg, label, subtitle, badge, isLast = false }: NavRowProps) {
   return (
-    <Link to={to} className="nav-row">
-      <div className="nav-row-icon" style={{ backgroundColor: iconBg }}>
-        <Icon className="w-5 h-5" style={{ color: iconColor }} strokeWidth={1.5} />
+    <Link to={to} style={{ ...styles.navRow, ...(isLast ? styles.navRowLast : {}) }}>
+      <div style={{ ...styles.navIcon, backgroundColor: iconBg }}>
+        <Icon style={{ width: '20px', height: '20px', color: '#fff' }} strokeWidth={1.5} />
       </div>
-      <div className="nav-row-content">
-        <div className="nav-row-title">{label}</div>
-        {subtitle && <div className="nav-row-subtitle">{subtitle}</div>}
+      <div style={styles.navContent}>
+        <div style={styles.navTitle}>{label}</div>
+        {subtitle && <div style={styles.navSubtitle}>{subtitle}</div>}
       </div>
-      {badge && <span className="badge badge-muted">{badge}</span>}
-      <ChevronRight className="w-5 h-5 nav-row-chevron" />
+      {badge && <span style={styles.badge}>{badge}</span>}
+      <ChevronRight style={{ width: '20px', height: '20px', color: '#4b5563', flexShrink: 0 }} />
     </Link>
   );
 }
 
 export function CoursesHomePage() {
   return (
-    <div className="pb-safe">
+    <div style={styles.page}>
       <LargeHeader
         title="Courses"
         subtitle="Explore and track the best courses"
       />
 
-      <div className="px-5 space-y-6 mt-2">
+      <div style={styles.content}>
         {/* Main course lists */}
-        <div className="list-group">
+        <div style={styles.listGroup}>
           <NavRow
             to="/courses/top-us"
             icon={Flag}
             iconBg="#1d6f42"
-            iconColor="white"
             label="Top US Courses"
             subtitle="America's Top 250 ranked by prestige"
           />
@@ -51,7 +123,6 @@ export function CoursesHomePage() {
             to="/courses/international"
             icon={Globe}
             iconBg="#007aff"
-            iconColor="white"
             label="International"
             subtitle="Best courses in Europe, Asia & beyond"
           />
@@ -59,21 +130,20 @@ export function CoursesHomePage() {
             to="/courses/played"
             icon={CheckCircle}
             iconBg="#34c759"
-            iconColor="white"
             label="My Played Courses"
             badge="0"
+            isLast
           />
         </div>
 
         {/* More options */}
-        <div>
-          <p className="section-header">More</p>
-          <div className="list-group">
+        <div style={styles.section}>
+          <p style={styles.sectionHeader}>More</p>
+          <div style={styles.listGroup}>
             <NavRow
               to="/profile/tournaments"
               icon={Trophy}
               iconBg="#d4a634"
-              iconColor="white"
               label="Major Championship Hosts"
               subtitle="US Open, Masters, PGA & The Open venues"
             />
@@ -81,9 +151,9 @@ export function CoursesHomePage() {
               to="/profile/favorites"
               icon={Star}
               iconBg="#ff9500"
-              iconColor="white"
               label="My Favorites"
               subtitle="Favorite holes, clubhouse items & more"
+              isLast
             />
           </div>
         </div>
