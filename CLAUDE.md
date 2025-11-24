@@ -1,6 +1,429 @@
-# The JDGA Official App - Original Vision
+# CLAUDE.md
 
-This document contains the complete, unmodified original vision for the app as provided by the creator.
+This file provides guidance to Claude Code when working with code in this repository.
+
+## Project Overview
+
+**The JDGA Official App** is a comprehensive golf course tracking and management app for serious recreational golfers. Built for players who have played thousands of rounds across top-ranked courses in the US and internationally.
+
+### Target User Profile
+
+- Plays 100-200 rounds per year
+- Can name the top 25 US courses off the top of their head
+- Plays across the top 250 US courses over multiple years
+- Collects scoring pencils from top courses played
+- Recalls best scores at virtually every course played
+- Member at one or more private clubs
+- Travels specifically for golf
+
+### Key Features
+
+1. **Course Database** - Top 200 world-ranked courses (US and international)
+2. **Course Tracking** - Mark courses as played, track times played, best scores
+3. **Scorecards** - Manual entry or OCR camera import
+4. **Golf Buddies** - Contact management for playing partners
+5. **Membership Tracking** - Who you know that's a member, who knows someone
+6. **Favorites** - Favorite holes (per course and global ranking), drinks, menu items
+7. **Merch Wishlist** - Apparel/souvenirs to buy at each clubhouse
+8. **Travel Info** - Airports, hotels, restaurants near each course
+9. **Tournament History** - Major championship hosts and results
+10. **Trip Planning** - Weather-based course suggestions
+
+---
+
+## Development Commands
+
+```bash
+npm run dev          # Start development server (Vite)
+npm run build        # Build for production
+npm run preview      # Preview production build
+```
+
+**Note**: No `type-check` script exists - use `npx tsc --noEmit` directly.
+
+---
+
+## Technology Stack
+
+- **React 19** with TypeScript
+- **Vite** for build tooling
+- **React Router v7** for navigation
+- **Tailwind CSS v4** (but currently using inline styles due to rendering issues)
+- **local-db-storage** (IndexedDB wrapper) for persistence
+- **Lucide React** for icons
+- **Sonner** for toast notifications
+
+---
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── layout/
+│   │   └── PageHeader.tsx      # Standard and LargeHeader components
+│   └── courses/
+│       └── CourseCard.tsx      # Course list item component
+├── pages/
+│   ├── courses/
+│   │   ├── CoursesHomePage.tsx     # Main courses navigation
+│   │   ├── TopUSCoursesPage.tsx    # Filterable US courses list
+│   │   └── CourseDetailPage.tsx    # Individual course view
+│   ├── scorecards/
+│   │   ├── ScorecardsPage.tsx      # Scorecard list with stats
+│   │   └── AddScorecardPage.tsx    # Two-step: select course, then entry method
+│   ├── buddies/
+│   │   └── BuddiesPage.tsx         # Golf contacts management
+│   ├── trips/
+│   │   └── TripsPage.tsx           # Trip planning
+│   └── profile/
+│       └── ProfilePage.tsx         # User profile and settings
+├── lib/
+│   └── storage/
+│       ├── db.ts                   # IndexedDB wrapper utilities
+│       ├── courseStorage.ts        # Course CRUD operations
+│       ├── contactStorage.ts       # Contact CRUD operations
+│       ├── scorecardStorage.ts     # Scorecard CRUD operations
+│       └── index.ts                # Re-exports all storage functions
+├── types/
+│   ├── course.ts                   # Course, UserCourseRecord, etc.
+│   ├── contact.ts                  # GolfContact type
+│   ├── scorecard.ts                # Scorecard type
+│   └── index.ts                    # Re-exports all types
+└── data/
+    └── courses/
+        ├── topUSCourses.ts         # Seed data (currently 15 courses)
+        ├── courses.csv             # CSV template (partial data)
+        ├── us_courses.csv          # US courses CSV template
+        └── international_courses.csv # International courses CSV template
+```
+
+---
+
+## Path Alias
+
+Use `@/` to import from `src/`:
+
+```typescript
+import { Button } from '@/components/ui/button';
+import { getAllCourses } from '@/lib/storage';
+import type { Course } from '@/types';
+```
+
+---
+
+## Core Data Models
+
+### Course
+
+```typescript
+interface Course {
+  id: string;
+  name: string;
+  clubName: string;
+  city: string;
+  state: string;
+  country: string;
+  continent: 'North America' | 'Europe' | 'Asia' | 'Oceania' | 'Africa' | 'South America';
+
+  // Rankings
+  usRanking?: number;           // Top 100/250 US ranking
+  worldRanking?: number;        // World ranking (Golf Digest)
+  rankingSource?: string;
+  rankingYear?: number;
+
+  // Course Details
+  courseType: 'Public' | 'Private' | 'Resort' | 'Semi-Private';
+  numberOfCourses: number;
+  courseNames: string[];
+  designer: string;
+  coDesigners?: string[];
+  yearOpened: number;
+
+  // Technical
+  teeBoxes: TeeBox[];
+  par: number;
+  holes: HoleInfo[];
+
+  // Tournament History
+  majorTournaments: TournamentHosting[];
+
+  // Contact & Location
+  address: string;
+  phone: string;
+  website?: string;
+
+  // Travel
+  closestPublicAirport?: AirportInfo;
+  closestPrivateAirport?: AirportInfo;
+  nearbyHotels: Hotel[];
+  nearbyRestaurants: Restaurant[];
+
+  // Weather
+  optimalMonths: number[];      // 1-12
+}
+```
+
+### UserCourseRecord
+
+User's personal data for each course:
+
+```typescript
+interface UserCourseRecord {
+  id: string;
+  courseId: string;
+  hasPlayed: boolean;
+  status?: 'played' | 'planning' | 'wishlist' | 'not-interested' | 'none';
+  timesPlayed: number;
+  estimatedTimesPlayed: boolean;
+  desiredFrequency: 'multiple_per_year' | 'yearly' | 'every_2_years' | 'every_5_years' | 'bucket_list' | 'none';
+  bestScore?: number;
+  firstPlayedDate?: string;
+  lastPlayedDate?: string;
+
+  // Contacts
+  playingPartners: string[];    // Contact IDs
+  knownMembers: string[];       // Contact IDs
+  knowsSomeoneWhoKnowsMember?: string;
+
+  // Favorites
+  favoriteHoleNumbers: number[];
+  favoriteDrink?: string;
+  favoriteMenuItem?: string;
+  merchWishlist: MerchItem[];
+
+  personalNotes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+### GolfContact
+
+```typescript
+interface GolfContact {
+  id: string;
+  name: string;
+  city?: string;
+  state?: string;
+  email?: string;
+  phone?: string;
+
+  // Golf-specific
+  membershipClubs: string[];    // Course IDs
+  skillLevel: 'low' | 'mid' | 'high';
+  playFrequency: 'low' | 'mid' | 'high';
+  approximateAge?: number;
+
+  // Relationship
+  howMet?: string;
+  coursesPlayedTogether: string[];
+
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+### Scorecard
+
+```typescript
+interface Scorecard {
+  id: string;
+  courseId: string;
+  courseName: string;
+  date: string;
+  teeBox?: string;
+
+  // Scores
+  scores: number[];             // 18 holes
+  totalScore: number;
+  scoreToPar: number;
+
+  // Optional details
+  playingPartners?: string[];
+  weather?: string;
+  notes?: string;
+  imageUrl?: string;            // OCR source image
+
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+---
+
+## UI Guidelines
+
+### Styling Approach
+
+**IMPORTANT**: Tailwind CSS v4 classes are not rendering correctly in this project. Use **inline styles** for all styling:
+
+```typescript
+const styles = {
+  page: {
+    paddingBottom: 'env(safe-area-inset-bottom)',
+    backgroundColor: '#000',
+    minHeight: '100vh',
+    WebkitFontSmoothing: 'antialiased' as const,
+  },
+  card: {
+    backgroundColor: '#1c1c1e',
+    borderRadius: '14px',
+    padding: '16px 18px',
+  },
+  // etc.
+};
+```
+
+### Design Tokens
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| Background | `#000` | Page background |
+| Card Background | `#1c1c1e` | Cards, sections |
+| Primary Green | `#22c55e` | Buttons, played badges |
+| Gold | `#d4a634` | Rankings, featured items |
+| Muted Text | `#6b7280` | Labels, secondary text |
+| Border | `rgba(255,255,255,0.06)` | Dividers |
+| Card Radius | `14px` | Standard card radius |
+| Horizontal Margin | `20px` | Page content padding |
+
+### Component Patterns
+
+**LargeHeader** - iOS-style large title for section pages:
+```typescript
+<LargeHeader title="Scorecards" subtitle="Track your rounds">
+  <button className="btn-primary">Add Scorecard</button>
+</LargeHeader>
+```
+
+**PageHeader** - Standard navigation header with back button:
+```typescript
+<PageHeader title="Course Details" showBack />
+```
+
+**Filter Chips** - Use green gradient for selected state:
+```typescript
+background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)'
+```
+
+---
+
+## Storage Layer
+
+Uses `local-db-storage` (IndexedDB wrapper).
+
+### Storage Keys
+
+- `jdga_courses` - Master course database
+- `jdga_userCourses` - User's course records
+- `jdga_contacts` - Golf buddies
+- `jdga_scorecards` - Scorecard history
+- `jdga_favoriteHoles` - Global favorite holes ranking
+- `jdga_settings` - User preferences
+
+### Key Functions
+
+```typescript
+// Courses
+getAllCourses(): Promise<Course[]>
+getCourseById(id: string): Promise<Course | null>
+getTopUSCourses(limit?: number): Promise<Course[]>
+initializeCourses(courses: Course[]): Promise<void>
+
+// User Records
+getUserCourseRecord(courseId: string): Promise<UserCourseRecord | null>
+markCourseAsPlayed(courseId: string): Promise<UserCourseRecord>
+updateBestScore(courseId: string, score: number): Promise<void>
+
+// Contacts
+getAllContacts(): Promise<GolfContact[]>
+addContact(contact: Omit<GolfContact, 'id'>): Promise<GolfContact>
+
+// Scorecards
+getAllScorecards(): Promise<Scorecard[]>
+addScorecard(scorecard: Omit<Scorecard, 'id'>): Promise<Scorecard>
+```
+
+---
+
+## Course Data
+
+### Current State
+
+The app currently has only **15 courses** seeded in `src/data/courses/topUSCourses.ts`.
+
+### Data Source
+
+Golf Digest World's Greatest Golf Courses ranking (200 courses total):
+- Mix of US and international courses
+- US courses appear in **ALL CAPS/BOLD** in the source
+- Includes: name, designer, co-designers, year opened, city, state/region, country
+
+### CSV Structure
+
+Two separate CSV files are planned:
+
+**us_courses.csv**:
+```
+usRanking,worldRanking,name,clubName,city,state,designer,coDesigners,yearOpened,courseType,par,address,phone,website
+```
+
+**international_courses.csv**:
+```
+worldRanking,name,clubName,city,region,country,continent,designer,coDesigners,yearOpened,courseType,par,address,phone,website
+```
+
+### Loading Course Data
+
+Course data needs a loader to import from CSV into IndexedDB. Currently uses TypeScript seed data.
+
+---
+
+## Routing
+
+```
+/                           # Home (not implemented yet)
+/courses                    # Courses home - navigation hub
+/courses/top-us             # Top US courses (filterable list)
+/courses/:id                # Course detail page
+/scorecards                 # Scorecard list with stats
+/scorecards/add             # Add scorecard (step 1: select course)
+/scorecards/add/:courseId   # Add scorecard (step 2: entry method)
+/scorecards/:id             # Scorecard detail
+/buddies                    # Golf contacts list
+/buddies/:id                # Contact detail
+/trips                      # Trip planning
+/profile                    # User profile
+```
+
+---
+
+## Filter System (Top US Courses)
+
+Three filter categories:
+
+1. **Ranking**: All, Top 25, Top 50, Top 100
+2. **Type**: All, Public, Private
+3. **Status**: All, I've Played, Actively Planning, Wishlist, Not Interested
+
+Filters are collapsible. When collapsed, shows summary chips.
+
+---
+
+## Known Issues
+
+1. **Tailwind CSS v4** classes don't render - use inline styles
+2. **Course database** only has 15 courses - needs expansion to 200+
+3. **OCR scorecard import** not implemented yet
+4. **Weather-based suggestions** not implemented yet
+
+---
+
+## Original Vision
+
+(Preserved below for reference)
 
 ---
 
