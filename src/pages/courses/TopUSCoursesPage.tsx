@@ -387,6 +387,17 @@ export function TopUSCoursesPage() {
                   </button>
                 </div>
               )}
+
+              {/* Bottom collapse button */}
+              <div style={{
+                marginTop: hasActiveFilters ? '12px' : '20px',
+                display: 'flex',
+                justifyContent: 'flex-end'
+              }}>
+                <button onClick={() => setFiltersOpen(false)} style={styles.collapseButton}>
+                  <ChevronUp style={{ width: '20px', height: '20px' }} />
+                </button>
+              </div>
             </div>
           </>
         )}
