@@ -5,6 +5,147 @@ import { createContact } from '@/lib/storage';
 import type { SkillLevel, PlayFrequency } from '@/types';
 import { toast } from 'sonner';
 
+const styles = {
+  page: {
+    paddingBottom: 'calc(env(safe-area-inset-bottom) + 90px)',
+    backgroundColor: '#000',
+    minHeight: '100vh',
+    WebkitFontSmoothing: 'antialiased' as const,
+  },
+  form: {
+    padding: '0 20px',
+    marginTop: '24px',
+  },
+  section: {
+    marginBottom: '32px',
+  },
+  sectionTitle: {
+    fontSize: '13px',
+    fontWeight: 600,
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.5px',
+    color: '#6b7280',
+    marginBottom: '12px',
+  },
+  inputGroup: {
+    marginBottom: '12px',
+  },
+  input: {
+    width: '100%',
+    padding: '16px 18px',
+    backgroundColor: '#1c1c1e',
+    border: '1px solid rgba(255,255,255,0.06)',
+    borderRadius: '12px',
+    fontSize: '17px',
+    color: '#fff',
+    outline: 'none',
+    transition: 'all 0.2s ease',
+  },
+  inputFocus: {
+    borderColor: '#22c55e',
+  },
+  select: {
+    width: '100%',
+    padding: '16px 18px',
+    backgroundColor: '#1c1c1e',
+    border: '1px solid rgba(255,255,255,0.06)',
+    borderRadius: '12px',
+    fontSize: '17px',
+    color: '#fff',
+    outline: 'none',
+    appearance: 'none' as const,
+    backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'12\' height=\'8\' viewBox=\'0 0 12 8\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M1 1.5L6 6.5L11 1.5\' stroke=\'%236b7280\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/%3E%3C/svg%3E")',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 18px center',
+    paddingRight: '48px',
+  },
+  label: {
+    display: 'block',
+    fontSize: '15px',
+    fontWeight: 500,
+    color: '#9ca3af',
+    marginBottom: '8px',
+  },
+  row: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '12px',
+  },
+  checkboxContainer: {
+    marginBottom: '12px',
+  },
+  checkboxLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '14px',
+    padding: '18px',
+    backgroundColor: '#1c1c1e',
+    border: '1px solid rgba(255,255,255,0.06)',
+    borderRadius: '12px',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+  },
+  checkboxLabelActive: {
+    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+    borderColor: 'rgba(34, 197, 94, 0.3)',
+  },
+  checkbox: {
+    width: '24px',
+    height: '24px',
+    borderRadius: '6px',
+    border: '2px solid #4b5563',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    flexShrink: 0,
+    appearance: 'none' as const,
+    position: 'relative' as const,
+    transition: 'all 0.2s ease',
+  },
+  checkboxChecked: {
+    backgroundColor: '#22c55e',
+    borderColor: '#22c55e',
+  },
+  checkboxText: {
+    fontSize: '17px',
+    color: '#fff',
+    fontWeight: 500,
+  },
+  textarea: {
+    width: '100%',
+    padding: '16px 18px',
+    backgroundColor: '#1c1c1e',
+    border: '1px solid rgba(255,255,255,0.06)',
+    borderRadius: '12px',
+    fontSize: '17px',
+    color: '#fff',
+    outline: 'none',
+    resize: 'vertical' as const,
+    minHeight: '120px',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+  },
+  submitButton: {
+    width: '100%',
+    padding: '18px',
+    background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+    border: 'none',
+    borderRadius: '14px',
+    fontSize: '17px',
+    fontWeight: 600,
+    color: '#fff',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 4px 14px rgba(34, 197, 94, 0.4)',
+  },
+  submitButtonDisabled: {
+    opacity: 0.5,
+    cursor: 'not-allowed',
+    boxShadow: 'none',
+  },
+  placeholder: {
+    color: '#6b7280',
+  },
+};
+
 export function AddBuddyPage() {
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
@@ -65,54 +206,54 @@ export function AddBuddyPage() {
   };
 
   return (
-    <div className="pb-safe">
+    <div style={styles.page}>
       <PageHeader title="Add Buddy" showBack />
 
-      <form onSubmit={handleSubmit} className="px-4 py-4 space-y-6">
+      <form onSubmit={handleSubmit} style={styles.form}>
         {/* Name section */}
-        <section>
-          <h3 className="text-sm font-semibold text-[var(--foreground-muted)] uppercase tracking-wide mb-3">
-            Name
-          </h3>
-          <div className="space-y-3">
+        <div style={styles.section}>
+          <h3 style={styles.sectionTitle}>Name</h3>
+          <div style={styles.inputGroup}>
             <input
               type="text"
               placeholder="First Name *"
               value={form.firstName}
               onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-              className="w-full px-4 py-3 bg-[var(--card)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder:text-[var(--foreground-muted)]"
+              style={styles.input}
               required
             />
+          </div>
+          <div style={styles.inputGroup}>
             <input
               type="text"
               placeholder="Last Name *"
               value={form.lastName}
               onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-              className="w-full px-4 py-3 bg-[var(--card)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder:text-[var(--foreground-muted)]"
+              style={styles.input}
               required
             />
+          </div>
+          <div style={styles.inputGroup}>
             <input
               type="text"
               placeholder="Nickname (optional)"
               value={form.nickname}
               onChange={(e) => setForm({ ...form, nickname: e.target.value })}
-              className="w-full px-4 py-3 bg-[var(--card)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder:text-[var(--foreground-muted)]"
+              style={styles.input}
             />
           </div>
-        </section>
+        </div>
 
         {/* Location section */}
-        <section>
-          <h3 className="text-sm font-semibold text-[var(--foreground-muted)] uppercase tracking-wide mb-3">
-            Location
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
+        <div style={styles.section}>
+          <h3 style={styles.sectionTitle}>Location</h3>
+          <div style={styles.row}>
             <input
               type="text"
               placeholder="City *"
               value={form.homeCity}
               onChange={(e) => setForm({ ...form, homeCity: e.target.value })}
-              className="w-full px-4 py-3 bg-[var(--card)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder:text-[var(--foreground-muted)]"
+              style={styles.input}
               required
             />
             <input
@@ -120,133 +261,151 @@ export function AddBuddyPage() {
               placeholder="State *"
               value={form.homeState}
               onChange={(e) => setForm({ ...form, homeState: e.target.value })}
-              className="w-full px-4 py-3 bg-[var(--card)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder:text-[var(--foreground-muted)]"
+              style={styles.input}
               required
             />
           </div>
-        </section>
+        </div>
 
         {/* Golf profile section */}
-        <section>
-          <h3 className="text-sm font-semibold text-[var(--foreground-muted)] uppercase tracking-wide mb-3">
-            Golf Profile
-          </h3>
-          <div className="space-y-3">
+        <div style={styles.section}>
+          <h3 style={styles.sectionTitle}>Golf Profile</h3>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Skill Level</label>
+            <select
+              value={form.skillLevel}
+              onChange={(e) => setForm({ ...form, skillLevel: e.target.value as SkillLevel })}
+              style={styles.select}
+            >
+              <option value="recreational">Recreational</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Play Frequency</label>
+            <select
+              value={form.playFrequency}
+              onChange={(e) => setForm({ ...form, playFrequency: e.target.value as PlayFrequency })}
+              style={styles.select}
+            >
+              <option value="occasional">Occasional (1-20 rounds/year)</option>
+              <option value="regular">Regular (20-50 rounds/year)</option>
+              <option value="avid">Avid (50+ rounds/year)</option>
+            </select>
+          </div>
+          <div style={styles.row}>
             <div>
-              <label className="text-xs text-[var(--foreground-muted)] mb-1 block">Skill Level</label>
-              <select
-                value={form.skillLevel}
-                onChange={(e) => setForm({ ...form, skillLevel: e.target.value as SkillLevel })}
-                className="w-full px-4 py-3 bg-[var(--card)] border border-[var(--border)] rounded-lg text-[var(--foreground)]"
-              >
-                <option value="recreational">Recreational</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-xs text-[var(--foreground-muted)] mb-1 block">Play Frequency</label>
-              <select
-                value={form.playFrequency}
-                onChange={(e) => setForm({ ...form, playFrequency: e.target.value as PlayFrequency })}
-                className="w-full px-4 py-3 bg-[var(--card)] border border-[var(--border)] rounded-lg text-[var(--foreground)]"
-              >
-                <option value="occasional">Occasional</option>
-                <option value="regular">Regular</option>
-                <option value="avid">Avid</option>
-              </select>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
+              <label style={styles.label}>Approx. Age</label>
               <input
                 type="number"
-                placeholder="Approx. Age"
+                placeholder="45"
                 value={form.approximateAge}
                 onChange={(e) => setForm({ ...form, approximateAge: e.target.value })}
-                className="w-full px-4 py-3 bg-[var(--card)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder:text-[var(--foreground-muted)]"
+                style={styles.input}
               />
+            </div>
+            <div>
+              <label style={styles.label}>Handicap</label>
               <input
                 type="number"
                 step="0.1"
-                placeholder="Handicap"
+                placeholder="8.5"
                 value={form.handicap}
                 onChange={(e) => setForm({ ...form, handicap: e.target.value })}
-                className="w-full px-4 py-3 bg-[var(--card)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder:text-[var(--foreground-muted)]"
+                style={styles.input}
               />
             </div>
           </div>
-        </section>
+        </div>
 
         {/* Contact section */}
-        <section>
-          <h3 className="text-sm font-semibold text-[var(--foreground-muted)] uppercase tracking-wide mb-3">
-            Contact (Optional)
-          </h3>
-          <div className="space-y-3">
+        <div style={styles.section}>
+          <h3 style={styles.sectionTitle}>Contact Info (Optional)</h3>
+          <div style={styles.inputGroup}>
             <input
               type="tel"
-              placeholder="Phone"
+              placeholder="Phone Number"
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              className="w-full px-4 py-3 bg-[var(--card)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder:text-[var(--foreground-muted)]"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full px-4 py-3 bg-[var(--card)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder:text-[var(--foreground-muted)]"
+              style={styles.input}
             />
           </div>
-        </section>
+          <div style={styles.inputGroup}>
+            <input
+              type="email"
+              placeholder="Email Address"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              style={styles.input}
+            />
+          </div>
+        </div>
 
         {/* Relationship section */}
-        <section>
-          <h3 className="text-sm font-semibold text-[var(--foreground-muted)] uppercase tracking-wide mb-3">
-            Relationship
-          </h3>
-          <div className="space-y-3">
-            <label className="flex items-center gap-3 p-3 bg-[var(--card)] border border-[var(--border)] rounded-lg cursor-pointer">
+        <div style={styles.section}>
+          <h3 style={styles.sectionTitle}>Relationship</h3>
+          <div style={styles.checkboxContainer}>
+            <label
+              style={{
+                ...styles.checkboxLabel,
+                ...(form.hasPlayedWith ? styles.checkboxLabelActive : {}),
+              }}
+            >
               <input
                 type="checkbox"
                 checked={form.hasPlayedWith}
                 onChange={(e) => setForm({ ...form, hasPlayedWith: e.target.checked })}
-                className="w-5 h-5 rounded border-[var(--border)] text-[var(--primary)]"
+                style={{
+                  ...styles.checkbox,
+                  ...(form.hasPlayedWith ? styles.checkboxChecked : {}),
+                }}
               />
-              <span className="text-[var(--foreground)]">Have played together</span>
+              <span style={styles.checkboxText}>Have played together</span>
             </label>
-            <label className="flex items-center gap-3 p-3 bg-[var(--card)] border border-[var(--border)] rounded-lg cursor-pointer">
+          </div>
+          <div style={styles.checkboxContainer}>
+            <label
+              style={{
+                ...styles.checkboxLabel,
+                ...(form.wouldPlayWith ? styles.checkboxLabelActive : {}),
+              }}
+            >
               <input
                 type="checkbox"
                 checked={form.wouldPlayWith}
                 onChange={(e) => setForm({ ...form, wouldPlayWith: e.target.checked })}
-                className="w-5 h-5 rounded border-[var(--border)] text-[var(--primary)]"
+                style={{
+                  ...styles.checkbox,
+                  ...(form.wouldPlayWith ? styles.checkboxChecked : {}),
+                }}
               />
-              <span className="text-[var(--foreground)]">Would play with</span>
+              <span style={styles.checkboxText}>Would play with</span>
             </label>
           </div>
-        </section>
+        </div>
 
         {/* Notes section */}
-        <section>
-          <h3 className="text-sm font-semibold text-[var(--foreground-muted)] uppercase tracking-wide mb-3">
-            Notes
-          </h3>
+        <div style={styles.section}>
+          <h3 style={styles.sectionTitle}>Notes</h3>
           <textarea
-            placeholder="Add notes about this buddy..."
+            placeholder="Add notes about this buddy (e.g., how you met, memorable rounds together, playing style, etc.)"
             value={form.notes}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
-            rows={3}
-            className="w-full px-4 py-3 bg-[var(--card)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder:text-[var(--foreground-muted)] resize-none"
+            style={styles.textarea}
           />
-        </section>
+        </div>
 
         {/* Submit button */}
         <button
           type="submit"
           disabled={saving}
-          className="w-full py-3 bg-[var(--primary)] text-white rounded-lg font-semibold disabled:opacity-50"
+          style={{
+            ...styles.submitButton,
+            ...(saving ? styles.submitButtonDisabled : {}),
+          }}
         >
-          {saving ? 'Saving...' : 'Add Buddy'}
+          {saving ? 'Adding Buddy...' : 'Add Buddy'}
         </button>
       </form>
     </div>
