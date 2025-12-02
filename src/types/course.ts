@@ -64,58 +64,75 @@ export interface TournamentHosting {
 // Main Course interface
 export interface Course {
   id: string;
-  name: string;
-  clubName: string;
-  city: string;
-  state: string;
-  country: string;
-  continent: Continent;
+  name: string; // e.g., "West", "East", "The Ocean Course", "Stadium"
+  fullName: string; // e.g., "Winged Foot Golf Club: West"
+
+  // Club Relationship
+  clubId: string | null; // Reference to Club if part of multi-course facility, null if standalone
+
+  // Location (for standalone courses) - use Club data for multi-course facilities
+  city?: string;
+  state?: string;
+  country?: string;
+  continent?: Continent;
 
   // Rankings
   usRanking?: number; // Top 100/250 US ranking
   worldRanking?: number;
+  previousRank?: number;
   rankingSource?: string; // Golf Digest, Golf Magazine, etc.
   rankingYear?: number;
+  starRating?: number; // 1-5 stars
+  panelistCount?: number;
 
-  // Course Details
-  courseType: CourseType;
-  numberOfCourses: number;
-  courseNames: string[]; // If multi-course facility
+  // Badges/Awards
+  in100Greatest?: boolean;
+  in100GreatestPublic?: boolean;
+  bestInState?: boolean;
+
+  // Course Details (specific to this course, not club-level)
+  courseType?: CourseType; // For standalone courses; multi-course facilities get this from Club
   designer: string;
   coDesigners?: string[];
-  yearOpened: number;
-  ownership?: string;
-  founders?: string[];
+  yearOpened?: number;
+
+  // Course description and history
+  description?: string;
+  notableHistory?: string;
 
   // Technical Details
   teeBoxes: TeeBox[];
-  par: number;
+  par?: number;
+  yardage?: number;
   holes: HoleInfo[];
 
-  // Tournament History
+  // Tournament History (specific to this course)
   majorTournaments: TournamentHosting[];
+  tournamentSummary?: string; // e.g., "U.S. Open 2020 (Bryson DeChambeau)"
 
-  // Contact & Location
-  address: string;
-  phone: string;
+  // Contact & Location (for standalone courses only - multi-course facilities use Club)
+  address?: string;
+  phone?: string;
   website?: string;
   latitude?: number;
   longitude?: number;
 
-  // Travel Info
+  // Travel Info (for standalone courses only)
   closestPublicAirport?: AirportInfo;
   closestPrivateAirport?: AirportInfo;
-  nearbyHotels: Hotel[];
-  nearbyRestaurants: Restaurant[];
+  nearbyHotels?: Hotel[];
+  nearbyRestaurants?: Restaurant[];
 
-  // Weather
-  optimalMonths: number[]; // 1-12, months with best playing conditions
+  // Weather (for standalone courses only)
+  optimalMonths?: number[];
   weatherNotes?: string;
-  averageTemps?: Record<number, { high: number; low: number }>; // By month
+  averageTemps?: Record<number, { high: number; low: number }>;
 
   // Media
   photoUrl?: string;
-  logoUrl?: string;
+
+  // Notes from source data
+  notes?: string;
 }
 
 // Course status from user's perspective
@@ -140,18 +157,16 @@ export interface UserCourseRecord {
   firstPlayedDate?: string;
   lastPlayedDate?: string;
 
-  // Contacts at this course
-  playingPartners: string[]; // Contact IDs of people played with here
-  knownMembers: string[]; // Contact IDs of known members
-  knowsSomeoneWhoKnowsMember?: string; // Contact ID of person who knows a member
+  // Contacts at this course (club-level membership is tracked in UserClubRecord)
+  playingPartners: string[]; // Contact IDs of people played with at this specific course
 
-  // Favorites
+  // Favorites (specific to this course)
   favoriteHoleNumbers: number[];
   favoriteDrink?: string;
   favoriteMenuItem?: string;
   merchWishlist: MerchItem[];
 
-  // Notes
+  // Notes (specific to this course)
   personalNotes?: string;
 
   // Metadata

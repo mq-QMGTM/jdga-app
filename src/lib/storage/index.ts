@@ -2,6 +2,7 @@
 
 export * from './db';
 export * from './courseStorage';
+export * from './clubStorage';
 export * from './contactStorage';
 export * from './scorecardStorage';
 export * from './settingsStorage';

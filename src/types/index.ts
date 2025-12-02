@@ -1,6 +1,7 @@
 // Re-export all types from a single entry point
 
 export * from './course';
+export * from './club';
 export * from './contact';
 export * from './scorecard';
 export * from './membership';

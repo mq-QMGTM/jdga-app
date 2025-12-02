@@ -9,6 +9,10 @@ export const STORAGE_KEYS = {
   COURSES: 'jdga_courses',
   // User's course records (played, scores, favorites, etc.)
   USER_COURSES: 'jdga_user_courses',
+  // Master club database (facilities with multiple courses)
+  CLUBS: 'jdga_clubs',
+  // User's club records (members known, club notes, etc.)
+  USER_CLUBS: 'jdga_user_clubs',
   // Scorecards
   SCORECARDS: 'jdga_scorecards',
   // Golf buddy contacts

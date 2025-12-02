@@ -1,6 +1,6 @@
 // Course-specific storage operations
 
-import type { Course, UserCourseRecord, FavoriteHole, MerchItem } from '@/types';
+import type { Course, UserCourseRecord, FavoriteHole, MerchItem, CourseType } from '@/types';
 import {
   STORAGE_KEYS,
   getArrayData,
@@ -41,6 +41,16 @@ export async function getCoursesByState(state: string): Promise<Course[]> {
   return courses.filter((c) => c.state === state);
 }
 
+export async function getCoursesByClub(clubId: string): Promise<Course[]> {
+  const courses = await getAllCourses();
+  return courses.filter((c) => c.clubId === clubId);
+}
+
+export async function getStandaloneCourses(): Promise<Course[]> {
+  const courses = await getAllCourses();
+  return courses.filter((c) => !c.clubId);
+}
+
 export async function getCoursesByDesigner(designer: string): Promise<Course[]> {
   const courses = await getAllCourses();
   return courses.filter(
@@ -50,7 +60,7 @@ export async function getCoursesByDesigner(designer: string): Promise<Course[]> 
   );
 }
 
-export async function getCoursesByType(type: Course['courseType']): Promise<Course[]> {
+export async function getCoursesByType(type: CourseType): Promise<Course[]> {
   const courses = await getAllCourses();
   return courses.filter((c) => c.courseType === type);
 }
@@ -62,9 +72,9 @@ export async function searchCourses(query: string): Promise<Course[]> {
   return courses.filter(
     (c) =>
       c.name.toLowerCase().includes(lowerQuery) ||
-      c.clubName.toLowerCase().includes(lowerQuery) ||
-      c.city.toLowerCase().includes(lowerQuery) ||
-      c.state.toLowerCase().includes(lowerQuery) ||
+      c.fullName.toLowerCase().includes(lowerQuery) ||
+      c.city?.toLowerCase().includes(lowerQuery) ||
+      c.state?.toLowerCase().includes(lowerQuery) ||
       c.designer.toLowerCase().includes(lowerQuery)
   );
 }
