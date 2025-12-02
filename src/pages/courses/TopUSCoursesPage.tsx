@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { CourseCard } from '@/components/courses/CourseCard';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import type { Course, UserCourseRecord } from '@/types';
-import { getAllCourses, getAllUserCourseRecords } from '@/lib/storage';
+import type { Course, UserCourseRecord, Club } from '@/types';
+import { getAllCourses, getAllUserCourseRecords, getAllClubs } from '@/lib/storage';
 
 type RankingFilter = 'all' | 'top25' | 'top50' | 'top100';
 type TypeFilter = 'all' | 'public' | 'private';
@@ -187,6 +187,7 @@ const styles = {
 
 export function TopUSCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [clubs, setClubs] = useState<Club[]>([]);
   const [userRecords, setUserRecords] = useState<UserCourseRecord[]>([]);
   const [rankingFilter, setRankingFilter] = useState<RankingFilter>('all');
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
@@ -200,14 +201,16 @@ export function TopUSCoursesPage() {
 
   const loadData = async () => {
     try {
-      const [allCourses, records] = await Promise.all([
+      const [allCourses, allClubs, records] = await Promise.all([
         getAllCourses(),
+        getAllClubs(),
         getAllUserCourseRecords(),
       ]);
       const usCourses = allCourses
-        .filter((c) => c.country === 'USA' && c.usRanking)
+        .filter((c) => (c.country === 'USA' || !c.clubId) && c.usRanking)
         .sort((a, b) => (a.usRanking || 999) - (b.usRanking || 999));
       setCourses(usCourses);
+      setClubs(allClubs);
       setUserRecords(records);
     } catch (error) {
       console.error('Error loading courses:', error);
@@ -236,6 +239,11 @@ export function TopUSCoursesPage() {
   });
 
   const getUserRecord = (courseId: string) => userRecords.find((r) => r.courseId === courseId);
+
+  const getClubForCourse = (course: Course) => {
+    if (!course.clubId) return null;
+    return clubs.find((c) => c.id === course.clubId) || null;
+  };
 
   const playedCount = filteredCourses.filter((c) =>
     userRecords.some((r) => r.courseId === c.id && r.hasPlayed)
@@ -427,7 +435,12 @@ export function TopUSCoursesPage() {
           <div className="card-list">
             {filteredCourses.map((course) => (
               <Link key={course.id} to={`/courses/${course.id}`}>
-                <CourseCard course={course} userRecord={getUserRecord(course.id)} showRanking />
+                <CourseCard
+                  course={course}
+                  club={getClubForCourse(course)}
+                  userRecord={getUserRecord(course.id)}
+                  showRanking
+                />
               </Link>
             ))}
           </div>

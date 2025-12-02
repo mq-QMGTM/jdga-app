@@ -117,7 +117,7 @@ export function CoursesHomePage() {
             icon={Flag}
             iconBg="#1d6f42"
             label="Top US Courses"
-            subtitle="America's Top 250 ranked by prestige"
+            subtitle="Top 100 ranked by Golf Digest 2025"
           />
           <NavRow
             to="/courses/international"
