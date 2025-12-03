@@ -139,8 +139,18 @@ function processCSV() {
     // Insert clubId and clubName after previousRank (index 1)
     fields.splice(2, 0, clubId, clubName);
 
+    // Properly quote fields that contain commas or quotes
+    const escapedFields = fields.map(field => {
+      if (field.includes(',') || field.includes('"') || field.includes('\n')) {
+        // Escape quotes by doubling them
+        const escaped = field.replace(/"/g, '""');
+        return `"${escaped}"`;
+      }
+      return field;
+    });
+
     // Rejoin the fields
-    newLines.push(fields.join(','));
+    newLines.push(escapedFields.join(','));
   }
 
   // Write updated CSV

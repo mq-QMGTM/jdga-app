@@ -13,7 +13,7 @@ type StatusFilter = 'all' | 'played' | 'planning' | 'wishlist' | 'not-interested
 // Consistent styles matching CourseDetailPage
 const styles = {
   page: {
-    paddingBottom: 'env(safe-area-inset-bottom)',
+    paddingBottom: 'calc(env(safe-area-inset-bottom) + 90px)', // Account for bottom nav
     backgroundColor: '#000',
     minHeight: '100vh',
     WebkitFontSmoothing: 'antialiased' as const,
@@ -206,8 +206,16 @@ export function TopUSCoursesPage() {
         getAllClubs(),
         getAllUserCourseRecords(),
       ]);
+      // Filter US courses: courses with country='USA' or courses that belong to US clubs
       const usCourses = allCourses
-        .filter((c) => (c.country === 'USA' || !c.clubId) && c.usRanking)
+        .filter((c) => {
+          if (!c.usRanking) return false;
+          // Standalone course: check country directly
+          if (!c.clubId) return c.country === 'USA';
+          // Club course: check club's country
+          const club = allClubs.find(club => club.id === c.clubId);
+          return club?.country === 'USA';
+        })
         .sort((a, b) => (a.usRanking || 999) - (b.usRanking || 999));
       setCourses(usCourses);
       setClubs(allClubs);
