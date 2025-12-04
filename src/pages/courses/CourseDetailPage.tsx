@@ -242,6 +242,7 @@ export function CourseDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [course, setCourse] = useState<Course | null>(null);
+  const [club, setClub] = useState<any | null>(null);
   const [userRecord, setUserRecord] = useState<UserCourseRecord | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -251,12 +252,30 @@ export function CourseDetailPage() {
 
   const loadCourse = async (courseId: string) => {
     try {
-      const [courseData, record] = await Promise.all([
-        getCourseById(courseId),
-        getUserCourseRecord(courseId),
-      ]);
+      console.log('Loading course:', courseId);
+      const courseData = await getCourseById(courseId);
+      console.log('Course data loaded:', courseData);
+
+      if (!courseData) {
+        console.error('No course data found for ID:', courseId);
+        setLoading(false);
+        return;
+      }
+
+      const record = await getUserCourseRecord(courseId);
+      console.log('User record loaded:', record);
+
       setCourse(courseData);
       setUserRecord(record);
+
+      // Load club data if course is part of a club
+      if (courseData?.clubId) {
+        console.log('Loading club data for clubId:', courseData.clubId);
+        const { getClubById } = await import('@/lib/storage/clubStorage');
+        const clubData = await getClubById(courseData.clubId);
+        console.log('Club data loaded:', clubData);
+        setClub(clubData);
+      }
     } catch (error) {
       console.error('Error loading course:', error);
     } finally {
@@ -321,20 +340,22 @@ export function CourseDetailPage() {
 
         {/* Course info */}
         <div style={{ paddingRight: course.usRanking ? '70px' : '0' }}>
-          <h1 style={styles.courseName}>{course.name}</h1>
-          {course.clubName !== course.name && (
-            <p style={styles.clubName}>{course.clubName}</p>
+          <h1 style={styles.courseName}>{course.fullName || course.name}</h1>
+          {club && (
+            <p style={styles.clubName}>{club.name}</p>
           )}
           <div style={styles.locationRow}>
             <MapPin style={{ width: '16px', height: '16px', color: 'rgba(255,255,255,0.5)' }} strokeWidth={2} />
-            <span style={styles.locationText}>{course.city}, {course.state}</span>
+            <span style={styles.locationText}>
+              {club ? `${club.city}, ${club.state}` : `${course.city || ''}, ${course.state || ''}`}
+            </span>
           </div>
         </div>
 
         {/* Type & Year */}
         <div style={styles.metaRow}>
-          <span style={styles.typeBadge}>{course.courseType}</span>
-          <span style={styles.yearText}>Est. {course.yearOpened}</span>
+          <span style={styles.typeBadge}>{club?.courseType || course.courseType}</span>
+          {course.yearOpened && <span style={styles.yearText}>Est. {course.yearOpened}</span>}
         </div>
 
         {/* Played badge */}
@@ -398,11 +419,11 @@ export function CourseDetailPage() {
       <div style={styles.sectionWrapper}>
         <h3 style={styles.sectionTitle}>Contact</h3>
         <div style={styles.card}>
-          <DetailRow icon={MapPin} label="Address" value={course.address} />
-          <DetailRow icon={Phone} label="Phone" value={formatPhoneNumber(course.phone)} isLast={!course.website} />
-          {course.website && (
+          <DetailRow icon={MapPin} label="Address" value={club?.address || course.address} />
+          <DetailRow icon={Phone} label="Phone" value={formatPhoneNumber(club?.phone || course.phone)} isLast={!(club?.website || course.website)} />
+          {(club?.website || course.website) && (
             <a
-              href={course.website.startsWith('http') ? course.website : `https://${course.website}`}
+              href={(club?.website || course.website || '').startsWith('http') ? (club?.website || course.website) : `https://${club?.website || course.website}`}
               target="_blank"
               rel="noopener noreferrer"
               style={{ ...styles.row, ...styles.rowLast, textDecoration: 'none' }}
@@ -413,7 +434,7 @@ export function CourseDetailPage() {
               <div style={styles.rowContent}>
                 <div style={styles.rowLabel}>Website</div>
                 <div style={{ ...styles.rowValueLink, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {course.website}
+                  {club?.website || course.website}
                 </div>
               </div>
               <ChevronRight style={{ width: '20px', height: '20px', color: '#4b5563', flexShrink: 0 }} />
